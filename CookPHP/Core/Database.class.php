@@ -649,7 +649,7 @@ abstract class Database {
         if (is_array($data) && !empty($data)) {
             return implode(',', array_map([$this, 'value'], $data));
         }
-        if (is_numeric($data)) {
+        if (is_numeric($data) && preg_match('/^[1-9][0-9]*$/i', $data)) {
             return $data;
         } elseif (is_null($data)) {
             return "''";
@@ -937,7 +937,7 @@ abstract class Database {
     }
 
     protected function logSqlError() {
-        Error::showDbError($this->lastError(), Log::lastLog('sql')[1]);
+        Error::showDbError($this->lastError(), Log::lastLog('Sql')[1]);
     }
 
     /**
@@ -946,7 +946,7 @@ abstract class Database {
      * @return array
      */
     public function lastSql(): array {
-        return Log::lastLog('sql');
+        return Log::lastLog('Sql');
     }
 
     /**
@@ -955,7 +955,7 @@ abstract class Database {
      * @return array
      */
     public function getSql(): array {
-        return Log::getLog('sql');
+        return Log::getLog('Sql');
     }
 
     /**
@@ -966,7 +966,7 @@ abstract class Database {
      * @return $callable
      */
     public function logSql($sql, \closure $callable) {
-        return Log::setLog('sql', $sql, $callable);
+        return Log::setLog('Sql', $sql, $callable);
     }
 
     /**

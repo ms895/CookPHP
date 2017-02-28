@@ -92,7 +92,7 @@ class Cookie {
      */
     private static function edit($name, $value = "", $lifetime = 0, $option = []) {
         self::init($option);
-        setcookie($name, $value, $lifetime, self::$config['path'], self::$config['domain'], self::$config['secure'], self::$config['httponly']);
+        !empty($name) && setcookie($name, $value, $lifetime, self::$config['path'], self::$config['domain'], self::$config['secure'], self::$config['httponly']);
     }
 
     /**

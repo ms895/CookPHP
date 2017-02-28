@@ -81,7 +81,7 @@ class Redis implements \SessionHandlerInterface {
      * @return bool|string
      */
     public function read($sessID) {
-        return Log::setLog('session Redis', 'get: ' . $sessID, function () use ($sessID) {
+        return Log::setLog('SessionRedis', 'get: ' . $sessID, function () use ($sessID) {
                     return $this->handler->get($this->_config['prefix'] . $sessID);
                 });
     }
@@ -94,7 +94,7 @@ class Redis implements \SessionHandlerInterface {
      * @return bool
      */
     public function write($sessID, $sessData) {
-        return Log::setLog('session Redis', 'write: ' . $sessID, function () use ($sessID, $sessData) {
+        return Log::setLog('SessionRedis', 'write: ' . $sessID, function () use ($sessID, $sessData) {
                     if (Config::get('session.expiration') > 0) {
                         return $this->handler->setex($this->_config['prefix'] . $sessID, Config::get('session.expiration'), $sessData);
                     } else {
@@ -110,7 +110,7 @@ class Redis implements \SessionHandlerInterface {
      * @return bool|void
      */
     public function destroy($sessID) {
-        Log::setLog('session Redis', 'remove: ' . $sessID, function () use ($sessID) {
+        Log::setLog('SessionRedis', 'remove: ' . $sessID, function () use ($sessID) {
             $this->handler->delete($this->_config['prefix'] . $sessID);
         });
         return true;

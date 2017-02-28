@@ -29,7 +29,7 @@ class Cache {
     private $_driver, $drivername;
 
     public static function init($driver = null) {
-        static $_cache = [];
+        static $_Cache= [];
         return $_cache[$driver] ?? ($_cache[$driver] = (new Cache($driver)));
     }
 
@@ -50,7 +50,7 @@ class Cache {
      * @return mixed
      */
     public function get($name) {
-        return Log::setLog('cache ' . $this->drivername, 'get: ' . $name, function () use ($name) {
+        return Log::setLog('Cache' . $this->drivername, 'get: ' . $name, function () use ($name) {
                     return $this->_driver->get(md5($name));
                 });
     }
@@ -64,7 +64,7 @@ class Cache {
      * @return bool
      */
     public function set($name, $value, $expire = null) {
-        return Log::setLog('cache ' . $this->drivername, 'set: ' . $name, function () use ($name, $value, $expire) {
+        return Log::setLog('Cache' . $this->drivername, 'set: ' . $name, function () use ($name, $value, $expire) {
                     $this->_driver->set(md5($name), $value, $expire);
                 });
     }
@@ -76,7 +76,7 @@ class Cache {
      * @return bool
      */
     public function rm($name) {
-        return Log::setLog('cache ' . $this->drivername, 'rm: ' . $name, function () use ($name) {
+        return Log::setLog('Cache' . $this->drivername, 'rm: ' . $name, function () use ($name) {
                     $this->_driver->rm(md5($name));
                 });
     }
@@ -107,7 +107,7 @@ class Cache {
      * @return bool
      */
     public function clear() {
-        return Log::setLog('cache ' . $this->drivername, 'clear: ', function () {
+        return Log::setLog('Cache' . $this->drivername, 'clear: ', function () {
                     $this->_driver->clear();
                 });
     }

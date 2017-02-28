@@ -14,7 +14,7 @@
 
 namespace Core;
 
-use Core\Config;
+use Libraries\File as F;
 
 /**
  * 模板编译引擎
@@ -72,7 +72,6 @@ abstract class Compile {
      */
     protected function render($template = null, $data = null, $return = false) {
         !empty($data) && $this->assign($data);
-        $this->replaceTemplate($template);
         $content = $this->fetch($template);
         if ($return) {
             return $content;
@@ -112,12 +111,14 @@ abstract class Compile {
         $this->replaceTemplate($template);
         $this->getTemplateFile($template);
         $compileFile = $this->getCompileFile($template);
-        $time = microtime(true);
-        $this->compile($template, $compileFile);
-        $this->compileUsageTime = Log::getUsageTime($time, microtime(true));
+        Log::setLog('Compile', 'compile: ' . $template, function () use ($template, $compileFile) {
+            $time = microtime(true);
+            $this->compile($template, $compileFile);
+            $this->compileUsageTime = Log::getUsageTime($time, microtime(true));
+        });
         ob_start();
         ob_implicit_flush(0);
-        if (is_file($compileFile)) {
+        if (F::has($compileFile)) {
             extract($this->getVar());
             require $compileFile;
         }
@@ -260,10 +261,7 @@ abstract class Compile {
      * @return string
      */
     private function removeUTF8Bom($string) {
-        if (substr($string, 0, 3) == pack('CCC', 239, 187, 191)) {
-            return substr($string, 3);
-        }
-        return $string;
+        return substr($string, 0, 3) == pack('CCC', 239, 187, 191) ? substr($string, 3) : $string;
     }
 
     /**
@@ -273,42 +271,19 @@ abstract class Compile {
      * @param string $compileFile
      */
     private function compile(string $template, string $compileFile) {
-        $content = trim($this->removeUTF8Bom(file_get_contents($template)));
+        $content = trim($this->removeUTF8Bom(F::get($template)));
         $this->_left = '(?<!!)' . $this->stripPreg($this->left);
         $this->_right = '((?<![!]))' . $this->stripPreg($this->right);
         if ($this->layout) {
             $content = trim($this->parseLayout($content));
         }
         $content = $this->compileInclude($content);
-        if (!is_file($compileFile) || !Config::get('view.compilecache') || ($md5 = md5($content)) !== file_get_contents($compileFile, true, null, 8, 32)) {
+        if (!F::has($compileFile) || !Config::get('view.compilecache') || ($md5 = md5($content)) !== F::get($compileFile, 8, 32)) {
             if (!empty($content)) {
                 $this->compileCode($content);
-                $this->compresshtml && $this->compressHtml($content);
+                ($this->compresshtml || Config::get('view.compresshtml')) && $this->compressHtml($content);
             }
-            $this->makeDirectory(dirname($compileFile));
-            if (Config::get('view.compresshtml')) {
-                \Libraries\Format::html($content);
-            }
-            file_put_contents($compileFile, "<?php\n//" . (!empty($md5) ? $md5 : '') . "\n?>" . $content);
-        }
-    }
-
-    /**
-     * 创建目录
-     * @access private
-     * @param string $path 路径
-     * @param string $mode 权限
-     * @return string 如果已经存在则返回YES，否则为flase
-     */
-    private function makeDirectory(string $path, $mode = 0755) {
-        if (is_dir($path)) {
-            return true;
-        } else {
-            $_path = dirname($path);
-            if ($_path !== $path) {
-                $this->makeDirectory($_path, $mode);
-            }
-            return mkdir($path, $mode);
+            F::set($compileFile, "<?php\n//" . (!empty($md5) ? $md5 : '') . "\n?>" . $content);
         }
     }
 
@@ -329,7 +304,7 @@ abstract class Compile {
      * @param string $content
      */
     private function parseLayout(string $content): string {
-        $layout = file_get_contents($this->getTemplateFile($this->layoutname));
+        $layout = F::get($this->getTemplateFile($this->layoutname));
         $layout = $this->compileInclude($layout);
         $pattern = '/' . $this->_left . 'block\sname=[\'"](.+?)[\'"]\s*?' . $this->_right . '(.*?)' . $this->_left . '\/block' . $this->_right . '/is';
         if (preg_match($pattern, $layout)) {
@@ -362,12 +337,9 @@ abstract class Compile {
      */
     private function replaceBlock($content): string {
         static $parse = 0;
-        $begin = $this->_left;
-        $end = $this->_right;
-        $reg = '/(' . $begin . 'block\sname=[\'"](.+?)[\'"]\s*?' . $end . ')(.*?)' . $begin . '\/block' . $end . '/is';
         if (is_string($content)) {
             do {
-                $content = preg_replace_callback($reg, [$this, 'replaceBlock'], $content);
+                $content = empty($content) ? '' : preg_replace_callback('/(' . $this->_left . 'block\sname=[\'"](.+?)[\'"]\s*?' . $this->_right . ')(.*?)' . $this->_left . '\/block' . $this->_right . '/is', [$this, 'replaceBlock'], $content);
             } while ($parse && $parse--);
             return $content;
         } elseif (is_array($content)) {
@@ -381,7 +353,7 @@ abstract class Compile {
      * @param string $content
      */
     private function compileInclude($content): string {
-        $content = preg_replace_callback('/' . $this->_left . 'include\sfile=[\'"](.+?)[\'"]\s*?' . $this->_right . '/is', [$this, 'parseInclude'], $content);
+        $content = empty($content) ? '' : preg_replace_callback('/' . $this->_left . 'include\sfile=[\'"](.+?)[\'"]\s*?' . $this->_right . '/is', [$this, 'parseInclude'], $content);
         return $content;
     }
 
@@ -393,8 +365,9 @@ abstract class Compile {
      */
     private function parseInclude($content): string {
         $template = stripslashes($content[1]);
+        $this->replaceTemplate($template);
         $this->getTemplateFile($template);
-        return $this->compileInclude(file_get_contents($template));
+        return $this->compileInclude(F::get($template));
     }
 
     /**

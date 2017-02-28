@@ -33,12 +33,13 @@ class Qrcode {
     const KANJI = 8;
     const FNC1_2 = 9;
 
-    public function __construct($data, $ecc = self::ECC_M) {//Main Routine
+    public function __construct($data, $z = 4, $ecc = self::ECC_M) {//Main Routine
         $this->prepare((string) $data, (integer) $ecc);
         $this->frame();
         $this->reedsolomon();
         $this->mask();
         $this->format();
+        $this->image($z);
     }
 
     private function prepare($data, $ecc) {//Validate Data
@@ -329,18 +330,14 @@ class Qrcode {
         imagecolorallocate($img, 255, 255, 255);
         imagecolorallocate($img, 0, 0, 0);
         imagecopyresized($img, $im, 4 * $z, 4 * $z, 0, 0, $this->dim * $z, $this->dim * $z, $this->dim, $this->dim);
-        imagedestroy($im);
-        ob_start();
-        imagegif($img);
-        imagedestroy($img); //Capture output
-        return ob_get_clean();
-    }
 
-    public function text($a = false) {//Either console or document
-        $c = ($a) ? ["\xDB\xDB", '  '] : ['  ', '██'];
-        $a = str_pad('', $this->dim * 2 + 8, $c[0]);
-        $a = [$a . "\n" . $a . "\n", $c[0] . $c[0]];
-        return $a[0] . $a[1] . str_replace(['0', '1'], $c, implode($a[1] . "\n" . $a[1], $this->img)) . $a[1] . "\n" . $a[0];
+
+        header('Pragma: no-cache');
+        header("content-type: image/png");
+        // 输出图像
+        imagedestroy($im);
+        imagepng($img);
+        imagedestroy($img);
     }
 
 //Utility Function

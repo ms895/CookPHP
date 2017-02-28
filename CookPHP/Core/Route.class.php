@@ -14,6 +14,8 @@
 
 namespace Core;
 
+use Libraries\Cookie;
+
 /**
  * 路由操作
  * @author CookPHP <admin@cookphp.org>
@@ -28,6 +30,7 @@ class Route {
 
     private static function initApp() {
         $urls = self::explode(self::removeSuffix(PATHINFO));
+        self::initLang($urls);
         self::$_project = Config::get('route.domain') ? $this->initDomain() : ucfirst(strtolower(strip_tags(!empty(($project = array_shift($urls))) ? $project : Config::get('route.project'))));
         if (!is_dir(__CONTROLLERS__ . self::$_project)) {
             self::$_project = '';
@@ -41,6 +44,16 @@ class Route {
         defined('CONTROLLER') or define('CONTROLLER', self::getController());
         defined('ACTION') or define('ACTION', self::getAction());
         !empty($urls) && self::parseVar($urls);
+    }
+
+    /**
+     * 初始语言包
+     */
+    private static function initLang(&$urls) {
+        $key = Config::get('default.langvar');
+        $lang = !empty($urls[0]) && Config::get('default.langarray') && in_array($urls[0], Config::get('default.langarray')) ? array_shift($urls) : ($_GET[$key] ?? ($_COOKIE[$key] ?? (preg_match('/([[:alpha:]]{1,8})(-([[:alpha:]|-]{1,8}))?(\s*;\s*q\s*=\s*(1\.0{0,3}|0\.\d{0,3}))?\s*(,|$)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches, PREG_OFFSET_CAPTURE) && isset($matches[1][0]) ? strtolower($matches[1][0] . (isset($matches[3][0]) ? '-' . $matches[3][0] : '')) : Config::get('default.language'))));
+        defined('LANGUAGE') or define('LANGUAGE', Config::get('default.langarray') && in_array($lang, Config::get('default.langarray')) ? $lang : Config::get('default.language'));
+        Cookie::set($key, LANGUAGE);
     }
 
     /**

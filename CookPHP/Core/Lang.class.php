@@ -32,7 +32,7 @@ class Lang {
     public static function get($key, $default = null) {
         $file = strstr($key, '.', true) ?: $key;
         $key = trim(strrchr($key, '.'), '.');
-        !isset(self::$_lang[$file]) && (self::$_lang[$file] = Loader::loadFile(__LANGS__ . $file . '.php'));
+        !isset(self::$_lang[$file]) && (self::$_lang[$file] = Loader::loadFile(__LANGS__ . LANGUAGE . DS . $file . '.php'));
         return empty($key) ? self::$_lang[$file] : (self::$_lang[$file][$key] ?? $default);
     }
 

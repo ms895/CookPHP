@@ -95,7 +95,8 @@ class Application {
                 return $class->newInstanceArgs($vars);
             }
         } catch (\Exception $e) {
-            echo $e->getMessage();exit;
+            echo $e->getMessage();
+            exit;
             Error::showError($e->getMessage());
         }
     }

@@ -86,7 +86,7 @@ class Exception {
             $message = "\t" . (is_array($message) ? implode("\n\t", $message) : $message);
             $template = 'Cli' . DS . $template;
         } else {
-            Error::setStatusHeader($status_code);
+            //Error::setStatusHeader($status_code);
             $message = '<p>' . (is_array($message) ? implode('</p><p>', $message) : $message) . '</p>';
             $template = 'Html' . DS . $template;
         }

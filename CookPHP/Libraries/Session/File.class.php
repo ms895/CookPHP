@@ -58,7 +58,7 @@ class File implements \SessionHandlerInterface {
      * @return bool|string
      */
     public function read($sessID) {
-        return Log::setLog('session File', 'get: ' . $sessID, function () use ($sessID) {
+        return Log::setLog('SessionFile', 'get: ' . $sessID, function () use ($sessID) {
                     return F::get($this->filename($sessID));
                 });
     }
@@ -71,7 +71,7 @@ class File implements \SessionHandlerInterface {
      * @return bool
      */
     public function write($sessID, $sessData) {
-        Log::setLog('session File', 'write: ' . $sessID, function () use ($sessID, $sessData) {
+        Log::setLog('SessionFile', 'write: ' . $sessID, function () use ($sessID, $sessData) {
             F::put($this->filename($sessID), $sessData);
         });
         return true;
@@ -84,7 +84,7 @@ class File implements \SessionHandlerInterface {
      * @return bool|void
      */
     public function destroy($sessID) {
-        Log::setLog('session File', 'remove: ' . $sessID, function () use ($sessID) {
+        Log::setLog('SessionFile', 'remove: ' . $sessID, function () use ($sessID) {
             F::remove($this->filename($sessID));
         });
 

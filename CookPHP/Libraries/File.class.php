@@ -51,11 +51,24 @@ class File {
     /**
      * 获取的文件的内容
      * @access public
-     * @param string $file
+     * @param string $file	文件地址，绝对路径
+     * @param number $offset	起始位置
+     * @param number $len	读取长度，默认读取所有
      * @return string|null
      */
-    public static function get($file) {
-        return self::isFile($file) ? file_get_contents($file) : null;
+    public static function get($file, $offset = 0, $len = null) {
+        return self::read($file, $offset, $len);
+    }
+
+    /**
+     * 读取文件内容
+     * @param string $file	文件地址，绝对路径
+     * @param number $offset	起始位置
+     * @param number $len	读取长度，默认读取所有
+     * @return string|null
+     */
+    public static function read($file, $offset = 0, $len = null) {
+        return self::has($file) ? ($len ? file_get_contents($file, true, null, $offset, $len) : file_get_contents($file)) : null;
     }
 
     /**

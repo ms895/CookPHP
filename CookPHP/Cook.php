@@ -22,12 +22,14 @@ define('VERSION', '0.0.1');
 defined('DEBUG') or define('DEBUG', false);
 //框架编码
 defined('CHARSET') or define('CHARSET', 'utf-8');
+//返回访问页面使用的请求方法
+defined('REQUEST_METHOD') or define('REQUEST_METHOD', strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+//返回浏览器相关参数
+defined('USER_AGENT') or define('USER_AGENT', $_SERVER['HTTP_USER_AGENT'] ?? '');
 //返回当前PHP是否是64位
 defined('IS_64BIT') or define('IS_64BIT', PHP_INT_SIZE === 8);
 //检测是否为CGI PHP
 defined('IS_CGI') or define('IS_CGI', (0 === strpos(PHP_SAPI, 'cgi') || false !== strpos(PHP_SAPI, 'fcgi')));
-//返回访问页面使用的请求方法
-defined('REQUEST_METHOD') or define('REQUEST_METHOD', strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET'));
 //检测是否Win
 defined('IS_WIN') or define('IS_WIN', strstr(PHP_OS, 'WIN'));
 //检测是否为CLI PHP
@@ -42,8 +44,6 @@ defined('IS_PUT') or define('IS_PUT', REQUEST_METHOD === 'PUT' ? true : false);
 defined('IS_DELETE') or define('IS_DELETE', REQUEST_METHOD === 'DELETE' ? true : false);
 //返回是否AJAX请求
 defined('IS_AJAX') or define('IS_AJAX', strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'xmlhttprequest' ? true : false);
-//返回浏览器相关参数
-defined('USER_AGENT') or define('USER_AGENT', $_SERVER['HTTP_USER_AGENT'] ?? '');
 //返回是否WeChat请求
 defined('IS_WECHAT') or define('IS_WECHAT', strpos(USER_AGENT, 'MicroMessenger') !== false ? true : false);
 //简化 DIRECTORY_SEPARATOR
@@ -55,7 +55,7 @@ defined('__APP__') or define('__APP__', dirname(__COOK__) . DS . 'Application' .
 //配制目录
 defined('__CONFIGS__') or define('__CONFIGS__', __APP__ . 'Config' . DS);
 //配制目录
-defined('__LANGS__') or define('__LANGS__', __APP__ . 'Lang' . DS);
+defined('__LANGS__') or define('__LANGS__', __APP__ . 'Lang' . DS );
 //控制器目录
 defined('__CONTROLLERS__') or define('__CONTROLLERS__', __APP__ . 'Controller' . DS);
 //模型目录
