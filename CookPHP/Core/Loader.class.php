@@ -113,6 +113,16 @@ class Loader {
     }
 
     /**
+     * 返回语言
+     * @access public
+     * @param string $key
+     * @return mixed
+     */
+    public static function Language($key, $default = null) {
+        return Language::get($key, $default);
+    }
+
+    /**
      * URl跳转
      * @param string $url
      */

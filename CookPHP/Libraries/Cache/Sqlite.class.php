@@ -82,6 +82,7 @@ class Sqlite{
             $value = gzcompress($value, 3);
         }
         $sql = 'REPLACE INTO ' . $this->config['table'] . ' (var, value,expire) VALUES (\'' . $name . '\', \'' . $value . '\', \'' . $expire . '\')';
+        unset($value);
         return sqlite_query($this->handler, $sql) ? true : false;
     }
 

@@ -76,6 +76,7 @@ class Redis{
         } else {
             $result = $this->handler->set($name, $value);
         }
+        unset($value);
         return $result ? true : false;
     }
 

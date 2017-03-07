@@ -164,11 +164,11 @@ class Mysqli extends Database {
     }
 
     private function setTimezone($zone) {
-        return $this->query('SET '.$this->name('time_zone').'=' . $this->value($zone)) !== false;
+        return $this->query('SET ' . $this->name('time_zone') . '=' . $this->value($zone)) !== false;
     }
 
     private function setAnsiQuotes() {
-        return $this->query('SET SQL_MODE=ANSI_QUOTES') !== false;
+        return $this->query('SET ' . $this->name('SQL_MODE') . '=' . $this->name('ANSI_QUOTES')) !== false;
     }
 
     public function renderStatement($type, $data) {

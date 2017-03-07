@@ -29,7 +29,7 @@ class Cache {
     private $_driver, $drivername;
 
     public static function init($driver = null) {
-        static $_Cache= [];
+        static $_Cache = [];
         return $_cache[$driver] ?? ($_cache[$driver] = (new Cache($driver)));
     }
 
@@ -51,7 +51,7 @@ class Cache {
      */
     public function get($name) {
         return Log::setLog('Cache' . $this->drivername, 'get: ' . $name, function () use ($name) {
-                    return $this->_driver->get(md5($name));
+                    return $this->_driver->get($this->getName($name));
                 });
     }
 
@@ -65,7 +65,7 @@ class Cache {
      */
     public function set($name, $value, $expire = null) {
         return Log::setLog('Cache' . $this->drivername, 'set: ' . $name, function () use ($name, $value, $expire) {
-                    $this->_driver->set(md5($name), $value, $expire);
+                    $this->_driver->set($this->getName($name), $value, $expire);
                 });
     }
 
@@ -77,7 +77,7 @@ class Cache {
      */
     public function rm($name) {
         return Log::setLog('Cache' . $this->drivername, 'rm: ' . $name, function () use ($name) {
-                    $this->_driver->rm(md5($name));
+                    $this->_driver->rm($this->getName($name));
                 });
     }
 
@@ -110,6 +110,15 @@ class Cache {
         return Log::setLog('Cache' . $this->drivername, 'clear: ', function () {
                     $this->_driver->clear();
                 });
+    }
+
+    /**
+     * 返回缓存名称
+     * @param string $name
+     * @return string
+     */
+    private function getName($name) {
+        return md5(($_SERVER['HTTP_HOST'] ?? '') . $name);
     }
 
     public function __get($name) {

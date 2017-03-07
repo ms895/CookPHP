@@ -377,7 +377,7 @@ class File {
     }
 
     /**
-     * 下载文件
+     * 发送下载文件
      * @access public
      * @param string $fullPath
      */

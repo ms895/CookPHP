@@ -39,7 +39,7 @@ class Log {
      * @param int $end
      */
     public static function getUsageMemory($start = null, $end = null) {
-        return function_exists('memory_get_usage') ? \Helpers\Format::size(($end ?: memory_get_usage()) - ($start ?: START_MEMORY)) : null;
+        return function_exists('memory_get_usage') ? \Libraries\Format::size(($end ?: memory_get_usage()) - ($start ?: START_MEMORY)) : null;
     }
 
     /**
@@ -73,6 +73,18 @@ class Log {
      */
     public static function lastLog($type): array {
         return isset(self::$_log[$type]) ? end(self::$_log[$type]) : [];
+    }
+
+    public static function display() {
+        $info = '';
+        foreach (self::$_log as $key => $value) {
+            foreach ($value as $vo) {
+                $info .= $key . ' : ' . $vo[0] . ' ' . $vo[1] . '<br/>';
+            }
+        }
+        echo <<<EOD
+<div id="cook_page_trace" style="background:white;margin:6px;font-size:14px;border:1px dashed silver;padding:8px"><fieldset id="querybox" style="margin:5px;"><legend style="color:gray;font-weight:bold">日志</legend><div style="overflow:auto;text-align:left;">{$info}</div></fieldset></div>
+EOD;
     }
 
 }

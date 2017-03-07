@@ -14,10 +14,7 @@
 
 namespace Libraries;
 
-use Core\{
-    Config,
-    Loader
-};
+use Core\Config;
 
 /**
  * Session类
@@ -26,11 +23,11 @@ use Core\{
 class Session {
 
     public static function init() {
-//        ini_set('session.save_handler', strtolower(Config::get('session.driver')));
-//        ini_set('session.save_path', Config::get('session.path'));
+        session_module_name(strtolower(Config::get('session.module')));
+        session_save_path(Config::get('session.path'));
         session_set_cookie_params((Config::get('cookie.lifetime') ? 0 : time() + Config::get('cookie.lifetime')), Config::get('cookie.path'), Config::get('cookie.domain'), Config::get('cookie.secure'), Config::get('cookie.httponly'));
         session_name(Config::get('session.name'));
-        session_set_save_handler(Loader::initialize(false !== strpos(Config::get('session.driver'), '\\') ? Config::get('session.driver') : __NAMESPACE__ . '\\Session\\' . ucwords(Config::get('session.driver'))), true);
+        //session_set_save_handler(Loader::initialize(false !== strpos(Config::get('session.driver'), '\\') ? Config::get('session.driver') : __NAMESPACE__ . '\\Session\\' . ucwords(Config::get('session.driver'))), true);
         session_start();
     }
 

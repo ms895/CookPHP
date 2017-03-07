@@ -14,6 +14,8 @@
 
 namespace Libraries;
 
+use Core\Input;
+
 /**
  * QQ纯真IP类
  * @author 费尔 <admin@cookphp.org>
@@ -41,14 +43,13 @@ class IP {
     public static function info($ip = '') {
         static $_info = [];
         if (empty($ip)) {
-            $ip = \Core\Input::clientIP();
+            $ip = Input::clientIP();
         }
-        if (!Validate::isIP4($ip)) {
-            return 'n/a';
+        if (!isset($_info[$ip]) && Validate::isIP4($ip)) {
+            $_info[$ip] = Cache::init()->remember($ip, function() use ($ip) {
+                return self::convertip($ip);
+            });
         }
-        $_info[$ip] = Cache::init()->remember($ip, function() use ($ip) {
-            return self::convertip($ip);
-        });
         return $_info[$ip] ?? [];
     }
 

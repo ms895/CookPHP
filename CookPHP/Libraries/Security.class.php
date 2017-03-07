@@ -14,8 +14,6 @@
 
 namespace Libraries;
 
-use Core\Config;
-
 /**
  * 字符安全类
  * @author CookPHP <admin@cookphp.org>
@@ -55,7 +53,7 @@ class Security {
      * @return string
      */
     public static function encryptDecrypt($string, $decrypt, $key = null) {
-        $key = md5($key ?: Config::get('default.authkey'));
+        $key = md5($key ?: self::getAuthkey());
         return $decrypt === 'DECODE' ? rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($string), MCRYPT_MODE_CBC, md5($key)), "12") : base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $string, MCRYPT_MODE_CBC, md5($key)));
     }
 
@@ -71,7 +69,7 @@ class Security {
      */
     public static function authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
         $ckey_length = 4;
-        $key = md5($key ?: Config::get('default.authkey'));
+        $key = md5($key ?: self::getAuthkey());
         $keya = md5(substr($key, 0, 16));
         $keyb = md5(substr($key, 16, 16));
         $keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length) : substr(md5(microtime()), -$ckey_length)) : '';
@@ -186,6 +184,16 @@ class Security {
         if (preg_match('/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i', $value)) {
             $value .= ' ';
         }
+    }
+
+    /**
+     * 返回密码字符
+     * @return string
+     */
+    public static function getAuthkey() {
+        return \Libraries\Cache::init('File')->remember('securityauthkey', function() {
+                    return md5(uniqid('', true));
+                }, 0);
     }
 
 }

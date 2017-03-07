@@ -927,7 +927,6 @@ class Model {
 
         $k = [];
         foreach ($params['fields'] as $key => $value) {
-            //运算支持 +、-、*、/
             preg_match('/([\w]+)(\[(\+|\-|\*|\/)\])?/i', $key, $match);
             if (isset($match[3]) && is_numeric($value)) {
                 $k[] = $this->driver->name($match[1]) . ' = ' . $this->driver->name($match[1]) . $match[3] . $value;

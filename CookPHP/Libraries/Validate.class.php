@@ -44,10 +44,12 @@ class Validate {
      * 验证是否是字母、数字和下划线 破折号
      * @access public
      * @param string $string
+     * @param int $min
+     * @param int $max
      * @return bool
      */
-    public static function isAlphaDash($string): bool {
-        return (bool) preg_match('/^[A-Za-z0-9\-\_]+$/', $string);
+    public static function isAlphaDash($string, int $min = 0, int $max = 0): bool {
+        return (bool) preg_match('/^[A-Za-z0-9\-\_]' . (!empty($min) && !empty($max) ? '{' . $min . ',' . $max . '}' : '+') . '$/', $string);
     }
 
     /**
@@ -121,7 +123,7 @@ class Validate {
     }
 
     /**
-     * 验证是数字ＩＤ
+     * 验证是数字ID
      * @access public
      * @param int $number 需要被验证的数字
      * @return bool 如果大于等于0的整数数字返回true，否则返回false

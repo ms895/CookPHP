@@ -89,7 +89,7 @@ class Verify {
      * @return bool 用户验证码是否正确
      */
     public function check($code) {
-        $key = $this->authcode(Config::get('default.authkey'));
+        $key = $this->authcode(Security::getAuthkey());
         // 验证码不能为空
         $secode = $_SESSION[$key] ?? '';
         if (empty($code) || empty($secode)) {
@@ -153,7 +153,7 @@ class Verify {
             imagettftext($this->_image, $this->fontSize, mt_rand(-40, 40), $codeNX, $this->fontSize * 1.6, $this->_color, $this->fontttf, $code[$i]);
         }
         // 保存验证码
-        $key = $this->authcode(Config::get('default.authkey'));
+        $key = $this->authcode(Security::getAuthkey());
         $code = $this->authcode(strtoupper(implode('', $code)));
         $secode = [];
         $secode['verify_code'] = $code; // 把校验码保存到session
@@ -245,7 +245,7 @@ class Verify {
     /* 加密验证码 */
 
     private function authcode($str) {
-        $key = substr(md5(Config::get('default.authkey')), 5, 8);
+        $key = substr(md5(Security::getAuthkey()), 5, 8);
         $str = substr(md5($str), 8, 10);
         return md5($key . $str);
     }

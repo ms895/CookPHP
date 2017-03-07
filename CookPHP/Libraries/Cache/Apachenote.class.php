@@ -73,6 +73,7 @@ class Apachenote{
         fwrite($this->handler, $s);
         $ret = fgets($this->handler);
         $this->close();
+        unset($value);
         if ($ret === "OK\n") {
             return true;
         }

@@ -55,7 +55,7 @@ defined('__APP__') or define('__APP__', dirname(__COOK__) . DS . 'Application' .
 //配制目录
 defined('__CONFIGS__') or define('__CONFIGS__', __APP__ . 'Config' . DS);
 //配制目录
-defined('__LANGS__') or define('__LANGS__', __APP__ . 'Lang' . DS );
+defined('__LANGUAGE__') or define('__LANGUAGE__', __APP__ . 'Language' . DS );
 //控制器目录
 defined('__CONTROLLERS__') or define('__CONTROLLERS__', __APP__ . 'Controller' . DS);
 //模型目录

@@ -18,13 +18,12 @@ namespace Core;
  * @author CookPHP <admin@cookphp.org>
  *
  */
-class Lang {
+class Language {
 
-    static $_lang = [];
+    static $_language = [];
 
     /**
-     * 返回配制
-     * 优先配制 框架、公共、项目
+     * 返回语言
      * @access public
      * @param string $key
      * @return mixed
@@ -32,12 +31,12 @@ class Lang {
     public static function get($key, $default = null) {
         $file = strstr($key, '.', true) ?: $key;
         $key = trim(strrchr($key, '.'), '.');
-        !isset(self::$_lang[$file]) && (self::$_lang[$file] = Loader::loadFile(__LANGS__ . LANGUAGE . DS . $file . '.php'));
-        return empty($key) ? self::$_lang[$file] : (self::$_lang[$file][$key] ?? $default);
+        !isset(self::$_language[$file]) && (self::$_language[$file] = Loader::loadFile(__LANGUAGE__ . strtolower(LANGUAGE) . DS . $file . '.php'));
+        return empty($key) ? self::$_language[$file] : (self::$_language[$file][$key] ?? $default);
     }
 
     /**
-     * 设置配制
+     * 设置语言
      * @access public
      * @param array|string $key
      * @param string    $range  作用域
@@ -49,13 +48,13 @@ class Lang {
             foreach ($keys as $key => $value) {
                 $file = strstr($key, '.', true);
                 $key = trim(strrchr($key, '.'), '.');
-                self::$_lang[$file][$key] = $value;
+                self::$_language[$file][$key] = $value;
             }
         } else {
             if (!empty($key)) {
                 $file = strstr($key, '.', true);
                 $key = trim(strrchr($key, '.'), '.');
-                self::$_lang[$file][$key] = $value;
+                self::$_language[$file][$key] = $value;
             }
         }
     }

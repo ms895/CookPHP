@@ -20,7 +20,7 @@ use Core\Config;
 /**
  * 文件类型缓存类
  */
-class File{
+class File {
 
     private $config = [];
 
@@ -107,6 +107,7 @@ class File{
         }
         $data = "<?php\n//" . sprintf('%012d', $expire) . $check . $data . "\n?>";
         $result = F::set($filename, $data);
+        unset($data, $value);
         if ($result) {
             clearstatcache();
             return true;
@@ -132,7 +133,7 @@ class File{
      * @return bool
      */
     public function clear() {
-        return F::deleteDirectory($this->config['path']);
+        return F::deleteDirectory($this->config['path'], true);
     }
 
 }

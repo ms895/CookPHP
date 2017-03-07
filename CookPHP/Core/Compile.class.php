@@ -280,7 +280,10 @@ abstract class Compile {
         $content = $this->compileInclude($content);
         if (!F::has($compileFile) || !Config::get('view.compilecache') || ($md5 = md5($content)) !== F::get($compileFile, 8, 32)) {
             if (!empty($content)) {
-                $this->compileCode($content);
+                $content = Log::setLog('Compile', 'compileCode: ' . $template, function () use ($content) {
+                            $this->compileCode($content);
+                            return $content;
+                        });
                 ($this->compresshtml || Config::get('view.compresshtml')) && $this->compressHtml($content);
             }
             F::set($compileFile, "<?php\n//" . (!empty($md5) ? $md5 : '') . "\n?>" . $content);
@@ -532,7 +535,7 @@ abstract class Compile {
         $this->_replace[] = '';
         $this->_replace[] = '<?php echo Config::get("\\1");?>';
         $this->_replace[] = '<?php echo \Core\Url::parse("\\1");?>';
-        $this->_replace[] = '<?php echo \Core\Lang::get("\\1");?>';
+        $this->_replace[] = '<?php echo \Core\Language::get("\\1");?>';
         $this->_replace[] = '<?php echo \Libraries\ \\1;?>';
         $this->_replace[] = '<?php echo $this->compileUsageTime;?>';
         $this->_replace[] = '<?php echo \Core\Log::getUsageTime();?>';

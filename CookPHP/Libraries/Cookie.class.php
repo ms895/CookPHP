@@ -48,7 +48,7 @@ class Cookie {
      * @param array $option
      */
     public static function set($name, $value = '', $option = []) {
-        $lifetime = is_numeric($option) ? time() + intval($option) : (!empty(self::$config['lifetime']) ? time() + intval(self::$config['lifetime']) : 0);
+        $lifetime = is_numeric($option) && !empty($option) ? time() + intval($option) : (!empty(self::$config['lifetime']) ? time() + intval(self::$config['lifetime']) : 0);
         if (is_array($value)) {
             $value = 'cookphp:' . json_encode(array_map('urlencode', $value));
         }
