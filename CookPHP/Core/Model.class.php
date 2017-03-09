@@ -883,7 +883,7 @@ class Model {
         $params['fields'] = $k;
         $params['values'] = $v;
         $query = $this->driver->buildStatement($params, $table, 'insert');
-        return $this->query($query) ? $this->lastInsertId() : false;
+        return $this->query($query) ? ($this->lastInsertId() ?: $this->lastAffected()) : false;
     }
 
     /**
