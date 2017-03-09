@@ -134,7 +134,7 @@ abstract class Controller extends View {
 
     public function __destruct() {
         if (!IS_AJAX && DEBUG) {
-            Log::display();
+            //Log::display();
         }
     }
 
