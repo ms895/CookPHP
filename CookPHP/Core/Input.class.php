@@ -163,20 +163,7 @@ class Input {
      * @return string
      */
     public static function clientIP(): string {
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            $pos = array_search('unknown', $arr);
-            if (false !== $pos) {
-                unset($arr[$pos]);
-            }
-            $ip = trim($arr[0]);
-        } elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
-            $ip = $_SERVER['REMOTE_ADDR'];
-        }
-        $long = sprintf("%u", ip2long($ip));
-        return $long ? $ip : '0.0.0.0';
+        return $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     }
 
 }

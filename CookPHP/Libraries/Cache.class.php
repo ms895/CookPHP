@@ -29,7 +29,7 @@ class Cache {
     private $_driver, $drivername;
 
     public static function init($driver = null) {
-        static $_Cache = [];
+        static $_cache = [];
         return $_cache[$driver] ?? ($_cache[$driver] = (new Cache($driver)));
     }
 
