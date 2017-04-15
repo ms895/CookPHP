@@ -1,8 +1,10 @@
 <?php
-
 define('DEBUG', true);
-//加载框架
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
+//ini_set('html_errors', 0);
 
-require '../CookPHP/Cook.php';
 
-\Core\Application::run();
+require '../CookPHP/startup.php';
+
+(new framework)->run();

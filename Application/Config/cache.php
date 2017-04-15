@@ -5,7 +5,7 @@
  */
 return[
     //缓存驱动
-    'driver' => 'redis',
+    'driver' => 'Redis',
     //缓存路径，文件时有效
     'path' => __CACHE__,
     //缓存服务器
@@ -21,7 +21,7 @@ return[
     //缓存时间
     'expire' => 3600,
     //压缩缓存
-    'compress' => true,
+    'compress' => false,
     //开启数据校验
-    'check' => true,
+    'check' => false,
 ];

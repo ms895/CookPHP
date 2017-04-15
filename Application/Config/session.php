@@ -6,9 +6,9 @@
 return[
     //是否默认启动Session
     'start' => true,
-    //使用的存储 session 的驱动
-    //File Redis
-    'driver' => 'Redis',
+    'sessionvar' => 'session',
+    //模块名称
+    'module' => 'redis',
     //session cookie 的名称
     'name' => 'cook_session',
     //sess名称前缀
@@ -17,7 +17,5 @@ return[
     'expiration' => 7200,
     //Session指定存储位置，取决于使用的存储 session 的驱动
     //'path' => '',
-    'path' => 'tcp://192.168.0.101:6379',//tcp://localhost:6379
-    //读取 session cookie 时，是否验证用户的 IP 地址 注意有些 ISP 会动态的修改 IP ，所以如果你想要一个不过期的 session，将其设置为 false
-    'ip' => false,
+    'path' => 'tcp://localhost:6379', //tcp://localhost:6379
 ];

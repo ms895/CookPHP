@@ -3,7 +3,7 @@
 </Files>
 AddDefaultCharset utf-8
 <IfModule mod_mime.c>
-    AddCharset utf-8 .css .js .json .rss
+    AddCharset utf-8 .css .js .json .rss .ttf
 </IfModule>
 <IfModule mod_rewrite.c>
     RewriteEngine On
