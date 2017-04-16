@@ -29,17 +29,29 @@ class framework {
      */
     public function init() {
         $this->autoload();
-        date_default_timezone_set(Config::get('default.timezone'));
+        $this->initTimezone();
         $this->initSession();
         $this->initHelper();
     }
 
+    /**
+     * 初始时区
+     */
+    public function initTimezone() {
+        date_default_timezone_set(Config::get('default.timezone'));
+    }
+
+    /**
+     * 初始session
+     */
     public function initSession() {
         Config::get('session.start') && Session::init();
     }
-
+/**
+ * 初始Coomon
+ */
     public function initHelper() {
-        require_once __COOK__ . 'Helper' . DS . 'Coomon.php';
+        require_once __COOK__ . 'Helper' . DS . 'Common.php';
     }
 
     /**
