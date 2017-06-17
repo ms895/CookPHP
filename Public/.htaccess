@@ -1,0 +1,14 @@
+<Files ~ "^.(htaccess|htpasswd)$">
+    deny from all
+</Files>
+AddDefaultCharset utf-8
+<IfModule mod_mime.c>
+    AddCharset utf-8 .css .js .json .rss .ttf
+</IfModule>
+<IfModule mod_rewrite.c>
+     RewriteEngine on
+     RewriteCond %{REQUEST_FILENAME} !-d
+     RewriteCond %{REQUEST_FILENAME} !-f
+     RewriteRule ^(.*)$ index.php [QSA,PT,L]
+     #RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
+</IfModule>
