@@ -148,9 +148,17 @@ class Route {
         }
         self::$method = strtolower(strip_tags(!empty(($action = array_shift($parts))) ? $action : Config::get('route.action')));
         (!preg_match('/^[A-Za-z]+$/', self::$controller) || !preg_match('/^[A-Za-z]+$/', self::$method)) && Error::notFound();
-        defined('APP_ROUTE') or define('APP_ROUTE', self::$route);
-        defined('APP_CONTROLLER') or define('APP_CONTROLLER', self::$controller);
-        defined('APP_METHOD') or define('APP_METHOD', self::$method);
+        defined('URLPART_ID') or define('URLPART_ID', $parts[0] ?? '');
+        //项目名称
+        defined('APP_ROUTE') or define('APP_ROUTE', self::getRoute());
+        //控制器名称
+        defined('APP_CONTROLLER') or define('APP_CONTROLLER', self::getController());
+        //动作名称
+        defined('APP_METHOD') or define('APP_METHOD', self::getMethod());
+        //运行文件
+        defined('BASEFILE') or define('BASEFILE', rtrim(Config::get('url.basefile'), '/\\'));
+        //运行目录
+        defined('BASEROOT') or define('BASEROOT', rtrim(Config::get('url.baseroot'), '/\\'));
     }
 
     /**

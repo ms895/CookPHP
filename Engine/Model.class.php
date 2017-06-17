@@ -13,7 +13,10 @@
 
 namespace Engine;
 
-use Library\Db;
+use Library\{
+    Db,
+    Cache
+};
 
 /**
  * 模型
@@ -24,7 +27,7 @@ class Model extends Loader {
     protected $params;
     protected $data;
     private $db;
-    private static $_db = [];
+    private static $_db = [], $cache = false, $sqlCnt = 0;
 
     public function __construct($table = null, $options = null) {
         $this->db = self::$_db[serialize($options)] ?? self::$_db[serialize($options)] = new Db($options);
@@ -287,6 +290,7 @@ class Model extends Loader {
      */
     public function query(string $sql) {
         $this->params = [];
+        self::$sqlCnt++;
         return preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $sql) ? $this->db->exec($sql) : $this->db->query($sql);
     }
 
@@ -296,7 +300,7 @@ class Model extends Loader {
      * @return array
      */
     public function find($sql = null) {
-        return $this->limit(1)->query($sql ?: $this->db->buildStatement($this->params, $this->table))->fetch();
+        return $this->fetch($sql);
     }
 
     /**
@@ -314,7 +318,23 @@ class Model extends Loader {
      * @return array
      */
     public function fetch($sql = null) {
-        return $this->limit(1)->query($sql ?: $this->db->buildStatement($this->params, $this->table))->fetch();
+        $sql = $sql ?: $this->db->buildStatement($this->params, $this->table);
+        $this->params = [];
+        return self::$cache ? Cache::remember($sql, function() use ($sql) {
+                    return $this->limit(1)->query($sql)->fetch();
+                }) : $this->limit(1)->query($sql)->fetch();
+    }
+
+    /**
+     * 查询数据
+     * @param stirng $sql
+     */
+    public function select($sql = null) {
+        $sql = $sql ?: $this->db->buildStatement($this->params, $this->table);
+        $this->params = [];
+        return self::$cache ? Cache::remember($sql, function() use ($sql) {
+                    return $this->query($sql)->fetchAll();
+                }, is_number_id(self::$cache) ? self::$cache : null) : $this->query($sql)->fetchAll();
     }
 
     /**
@@ -324,6 +344,24 @@ class Model extends Loader {
      */
     public function fetchAll($sql = null) {
         return $this->select($sql);
+    }
+
+    /**
+     * 开启缓存
+     * @return $this
+     */
+    public function cacheOn($expire = null) {
+        self::$cache = is_number_id($expire) ? $expire : (config('db.cache') ?: true);
+        return $this;
+    }
+
+    /**
+     * 关闭缓存
+     * @return $this
+     */
+    public function cacheOff() {
+        self::$cache = false;
+        return $this;
     }
 
     /**
@@ -390,14 +428,6 @@ class Model extends Loader {
     }
 
     /**
-     * 查询数据
-     * @param stirng $sql
-     */
-    public function select($sql = null) {
-        return $this->query($sql ?: $this->db->buildStatement($this->params, $this->table))->fetchAll();
-    }
-
-    /**
      * 新增数据
      * @access public
      * @param bool  $replace 是否replace新增
@@ -425,7 +455,7 @@ class Model extends Loader {
      * @return int|bool
      */
     public function insert(bool $replace = false) {
-        $this->params['replace'] = (bool) $replace;
+        $this->params['replace'] = (boolean) $replace;
         $data = $this->params['data'] ?? null;
         if (empty($data)) {
             return false;
@@ -464,6 +494,17 @@ class Model extends Loader {
      */
     public function delete() {
         return $this->query($this->db->buildStatement($this->params, $this->table, 'delete')) ?: false;
+    }
+
+    /**
+     * 得到分表名
+     * @param string|int $value
+     * @param int $num
+     * @return string
+     */
+    public function getPartition($value, $num = 10) {
+        $this->table( $this->table. '_' . (is_number_id($value) ? ($value % $num) : (is_string($value) ? (ord(substr(md5($value), 0, 1)) % $num) : (ord($value{0}) % $num))));
+        return $this;
     }
 
     public function schema() {

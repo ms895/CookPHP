@@ -67,7 +67,6 @@ class Url {
             }
         }
 
-
         if (isset($array['query']) || !empty($params)) {
             !empty($array['query']) && parse_str($array['query'], $query);
             $params = !empty($query) ? array_merge($query, $params) : $params;
@@ -81,7 +80,7 @@ class Url {
             }
         }
 
-        $url = (REWRITE ? BASEROOT : BASEFILE ) . '/' . trim($url, '/');
+        $url = BASEFILE . '/' . trim($url, '/');
         if (isset($anchor)) {
             $url .= '#' . $anchor;
         }
@@ -104,8 +103,7 @@ class Url {
             return $url;
         }
         $url = BASEROOT . '/' . ltrim($url, '/');
-        $url = ($domain ? self::domain() : '') . $url;
-        return $url;
+        return $domain ? self::domain() . $url : $url;
     }
 
     /**
@@ -198,7 +196,7 @@ class Url {
      * @return bool
      */
     public static function isUrl($url): bool {
-        return (bool) preg_match('/^(?:http(?:s)?:\/\/(?:[\w-]+\.)+[\w-]+(?:\:\d+)*+(?:\/[\w- .\/?%&=]*)?)$/', $url);
+        return (boolean) preg_match('/^(?:http(?:s)?:\/\/(?:[\w-]+\.)+[\w-]+(?:\:\d+)*+(?:\/[\w- .\/?%&=]*)?)$/', $url);
     }
 
 }

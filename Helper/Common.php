@@ -8,7 +8,7 @@ if (!function_exists('is_alpha')) {
      * @return bool
      */
     function is_alpha($string): bool {
-        return (bool) preg_match('/^[A-Za-z]+$/', $string);
+        return (boolean) preg_match('/^[A-Za-z]+$/', $string);
     }
 
 }
@@ -20,7 +20,7 @@ if (!function_exists('is_alpha_num')) {
      * @return bool
      */
     function is_alpha_num($string): bool {
-        return (bool) preg_match('/^[A-Za-z0-9]+$/', $string);
+        return (boolean) preg_match('/^[A-Za-z0-9]+$/', $string);
     }
 
 }
@@ -34,7 +34,7 @@ if (!function_exists('is_alpha_dash')) {
      * @return bool
      */
     function is_alpha_dash($string, int $min = 0, int $max = 0): bool {
-        return (bool) preg_match('/^[A-Za-z0-9\-\_]' . (is_number_id($min) && is_number_id($max) ? '{' . $min . ',' . $max . '}' : '+') . '$/', $string);
+        return (boolean) preg_match('/^[A-Za-z0-9\-\_]' . (is_number_id($min) && is_number_id($max) ? '{' . $min . ',' . $max . '}' : '+') . '$/', $string);
     }
 
 }
@@ -166,7 +166,7 @@ if (!function_exists('is_chinese')) {
      * @return bool 如果是中文则返回true，否则返回false
      */
     function is_chinese($string): bool {
-        return (bool) preg_match('/^[\x{4e00}-\x{9fa5}]+$/u', $string);
+        return (boolean) preg_match('/^[\x{4e00}-\x{9fa5}]+$/u', $string);
     }
 
 }
@@ -178,7 +178,7 @@ if (!function_exists('is_html')) {
      * @return bool 如果是合法的html标记则返回true，否则返回false
      */
     function is_html($string): bool {
-        return (bool) preg_match('/^<(.*)>.*|<(.*)\/>$/', $string);
+        return (boolean) preg_match('/^<(.*)>.*|<(.*)\/>$/', $string);
     }
 
 }
@@ -190,7 +190,7 @@ if (!function_exists('is_script')) {
      * @return bool 如果是合法的客户端脚本则返回true，否则返回false
      */
     function is_script($string): bool {
-        return (bool) preg_match('/<script(?:.*?)>(?:[^\x00]*?)<\/script>/', $string);
+        return (boolean) preg_match('/<script(?:.*?)>(?:[^\x00]*?)<\/script>/', $string);
     }
 
 }
@@ -387,12 +387,11 @@ if (!function_exists('url_base')) {
     /**
      * 解析URL
      * @param string $url
-     * @param array $params
      * @param bool $domain 是否显示域名和协议
      * @return string
      */
-    function url_base(string $url, $params = [], bool $domain = false) {
-        return \Library\Url::base($url, $params, $domain);
+    function url_base(string $url, bool $domain = false) {
+        return \Library\Url::base($url, $domain);
     }
 
 }
@@ -409,6 +408,30 @@ if (!function_exists('view')) {
     }
 
 }
+if (!function_exists('model')) {
+
+    /**
+     * 实例model
+     * @access protected
+     * @param string|null $table 表
+     * @param array $config 配制
+     * @return \Core\Model
+     */
+    function model(string $table = null, $config = []) {
+        static $_model = [];
+        if (!isset($_model[$table])) {
+            if (!empty($table) && class_exists(($newtable = '\\Model\\' . parse_name(preg_replace('/[^a-zA-Z0-9_\/]/', '', (string) $table), true)))) {
+                $_model[$table] = new $newtable(null, $config);
+            } else {
+                $_model[$table] = new \Engine\Model($table ?: null, $config);
+            }
+        }
+
+        return $_model[$table];
+    }
+
+}
+
 if (!function_exists('redirect')) {
 
     /**

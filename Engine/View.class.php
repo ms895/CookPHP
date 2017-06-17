@@ -543,7 +543,7 @@ class View {
         $this->_preg[] = '/' . $this->_left . '\#(.*?)' . $this->_right . '/';
         $this->_preg[] = '/' . $this->_left . '\%(.*?)' . $this->_right . '/';
         $this->_preg[] = '/' . $this->_left . 'Lib (.*?)' . $this->_right . '/';
-        $this->_preg[] = '/' . $this->_left . 'Language' . $this->_right . '/';
+        $this->_preg[] = '/' . $this->_left . 'LANGUAGE' . $this->_right . '/';
         $this->_preg[] = '/' . $this->_left . 'CompileTime' . $this->_right . '/';
         $this->_preg[] = '/' . $this->_left . 'UsageTime' . $this->_right . '/';
         $this->_preg[] = '/' . $this->_left . 'UsageMemory' . $this->_right . '/';

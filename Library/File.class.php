@@ -383,19 +383,19 @@ class File {
      * @access public
      * @param string $fullPath
      */
-    public static function download($fullPath) {
-        if ($fd = fopen($fullPath, 'r')) {
-            $fsize = filesize($fullPath);
-            $path_parts = pathinfo($fullPath);
+    public static function download($file, $name = null) {
+        if ($fd = fopen($file, 'r')) {
+            $fsize = filesize($file);
+            $path_parts = pathinfo($file);
             $ext = strtolower($path_parts['extension']);
             switch ($ext) {
                 case 'pdf':
                     header('Content-type: application/pdf');
-                    header('Content-Disposition: attachment; filename="' . $path_parts['basename'] . '"');
+                    header('Content-Disposition: attachment; filename="' . ($name ? $name . '.' . $ext : $path_parts['basename']) . '"');
                     break;
                 default:
                     header('Content-type: application/octet-stream');
-                    header('Content-Disposition: filename="' . $path_parts['basename'] . '"');
+                    header('Content-Disposition: filename="' . ($name ? $name . '.' . $ext : $path_parts['basename']) . '"');
             }
             header("Content-length: $fsize");
             header('Cache-control: private');
